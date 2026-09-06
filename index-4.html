@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CordList — kumpulan chord gitar lagu Indonesia yang ringkas dan mudah dibaca.">
+  <meta name="theme-color" content="#11100f">
+  <title>CordList — Chord Gitar Indonesia</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0e0d0c; --panel:#171513; --panel2:#211e1a; --text:#f5efe8; --muted:#aaa097; --line:#332e29; --orange:#ff8a1f; --orange-soft:#ffb15f; --chord-size:1rem; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:radial-gradient(circle at 85% 0%,rgba(255,138,31,.09),transparent 24rem),var(--bg); color:var(--text); font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; font-size:16px; line-height:1.65; }
+    button,input { font:inherit; } button { cursor:pointer; }
+    .topbar { position:sticky; top:0; z-index:10; border-bottom:1px solid var(--line); background:rgba(14,13,12,.92); backdrop-filter:blur(16px); }
+    .nav { width:min(100% - 32px,1060px); min-height:64px; margin:auto; display:flex; align-items:center; gap:22px; }
+    .brand { color:var(--text); text-decoration:none; font-size:1.2rem; font-weight:850; letter-spacing:-.04em; }
+    .brand span,.chord { color:var(--orange); }
+    .nav-links { display:flex; gap:18px; margin-left:auto; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-size:.9rem; font-weight:700; }
+    .nav-links a:hover,.song-list a:hover { color:var(--orange-soft); }
+    .search-button { width:40px; height:40px; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; background:var(--panel); color:var(--text); }
+    .search-button:hover { border-color:var(--orange); }
+    .page { width:min(100% - 32px,1060px); margin:44px auto 72px; display:grid; grid-template-columns:minmax(0,690px) minmax(230px,1fr); gap:44px; align-items:start; }
+    .breadcrumb { margin:0 0 16px; color:var(--muted); font-size:.82rem; }
+    .breadcrumb a { color:var(--orange-soft); text-decoration:none; }
+    h1 { max-width:660px; margin:0; font-size:clamp(1.75rem,5vw,2.8rem); line-height:1.12; letter-spacing:-.045em; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px 18px; margin:15px 0 26px; color:var(--muted); font-size:.88rem; }
+    .meta b { color:var(--text); }
+    .notice { padding:14px 16px; border:1px solid var(--line); border-left:3px solid var(--orange); border-radius:8px; background:var(--panel); color:var(--muted); font-size:.9rem; }
+    .player { margin:24px 0; padding:14px; display:flex; align-items:center; gap:14px; border:1px solid var(--line); border-radius:10px; background:var(--panel); }
+    .play { width:42px; height:42px; flex:0 0 auto; border:0; border-radius:50%; background:var(--orange); color:#1a0d02; font-weight:900; }
+    .track { min-width:0; flex:1; } .track strong,.track small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .track small { color:var(--muted); }
+    .progress { height:3px; margin-top:8px; border-radius:8px; background:var(--line); } .progress span { display:block; width:28%; height:100%; border-radius:inherit; background:var(--orange); }
+    .tools { position:sticky; top:72px; z-index:8; margin:24px 0; padding:10px; display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:10px; background:rgba(23,21,19,.96); box-shadow:0 12px 30px rgba(0,0,0,.2); }
+    .tool-label { margin-right:auto; color:var(--muted); font-size:.82rem; font-weight:700; }
+    .tools button { min-width:38px; height:36px; padding:0 10px; border:1px solid var(--line); border-radius:7px; background:var(--panel2); color:var(--text); font-weight:800; }
+    .tools button:hover,.tools button:focus-visible { border-color:var(--orange); outline:none; }
+    .key-display { min-width:76px; color:var(--orange-soft); text-align:center; font-size:.88rem; font-weight:800; }
+    .chord-sheet { font-family:"Roboto Mono","SFMono-Regular",Consolas,monospace; font-size:var(--chord-size); line-height:1.72; white-space:pre-wrap; word-break:normal; }
+    .section-title { display:block; margin-top:26px; color:var(--text); font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-weight:850; }
+    .chord { font-weight:850; text-shadow:0 0 18px rgba(255,138,31,.14); }
+    .lyric { color:#e6ddd5; }
+    aside { padding:22px; border:1px solid var(--line); border-radius:12px; background:linear-gradient(145deg,#181512,#121110); }
+    aside h2 { margin:0 0 16px; font-size:1.05rem; }
+    .song-list { display:grid; gap:4px; }
+    .song-list a { padding:11px 0; display:grid; grid-template-columns:32px 1fr; gap:10px; align-items:center; border-bottom:1px solid var(--line); color:var(--text); text-decoration:none; font-size:.9rem; line-height:1.3; }
+    .song-list a:last-child { border-bottom:0; }
+    .number { width:28px; height:28px; display:grid; place-items:center; border-radius:7px; background:var(--panel2); color:var(--orange); font-size:.76rem; font-weight:850; }
+    footer { border-top:1px solid var(--line); color:var(--muted); font-size:.84rem; }
+    .footer-inner { width:min(100% - 32px,1060px); margin:auto; padding:26px 0; display:flex; justify-content:space-between; gap:18px; }
+    @media(max-width:780px) { .nav-links{display:none} .page{margin-top:28px;grid-template-columns:1fr;gap:34px} .tools{top:70px} aside{padding:18px} }
+    @media(max-width:420px) { .nav,.page,.footer-inner{width:min(100% - 22px,1060px)} .page{margin-bottom:48px} .tool-label{display:none} .tools{justify-content:space-between} .key-display{min-width:64px} .footer-inner{display:block} }
+  </style>
+</head>
+<body>
+  <header class="topbar"><nav class="nav" aria-label="Navigasi utama">
+    <a class="brand" href="#">Cord<span>List</span></a>
+    <div class="nav-links"><a href="#chord">Chord</a><a href="#populer">Terpopuler</a><a href="#tentang">Tentang</a></div>
+    <button class="search-button" type="button" aria-label="Cari lagu" title="Cari lagu">⌕</button>
+  </nav></header>
+
+  <main class="page">
+    <article id="chord">
+      <p class="breadcrumb"><a href="#">Beranda</a> / Peterpan / Menunggumu</p>
+      <h1>Chord Peterpan feat. Chrisye — Menunggumu</h1>
+      <div class="meta"><span>Nada dasar <b id="meta-key">Am</b></span><span>Terakhir diperbarui 5 September 2026</span></div>
+      <div class="notice">Gunakan tombol transpose untuk menyesuaikan nada dengan jangkauan suara Anda.</div>
+      <div class="player" aria-label="Pemutar lagu contoh">
+        <button class="play" type="button" aria-label="Putar lagu">▶</button>
+        <div class="track"><strong>Menunggumu</strong><small>Peterpan feat. Chrisye</small><div class="progress" aria-hidden="true"><span></span></div></div><small>00:00</small>
+      </div>
+      <div class="tools" aria-label="Alat chord">
+        <span class="tool-label">Transpose</span><button id="down" type="button" aria-label="Turunkan nada">−</button><span class="key-display">Nada: <span id="key">Am</span></span><button id="up" type="button" aria-label="Naikkan nada">+</button><button id="smaller" type="button" aria-label="Perkecil teks">A−</button><button id="larger" type="button" aria-label="Perbesar teks">A+</button>
+      </div>
+      <div class="chord-sheet" aria-label="Chord lagu">
+<span class="section-title">Intro</span>
+<span class="chord" data-chord="Am">Am</span>  <span class="chord" data-chord="G">G</span>  <span class="chord" data-chord="F">F</span>  <span class="chord" data-chord="E">E</span>
+
+<span class="section-title">Verse</span>
+<span class="chord" data-chord="Am">Am</span>                 <span class="chord" data-chord="G">G</span>
+<span class="lyric">Di batas waktu yang terus berjalan</span>
+<span class="chord" data-chord="F">F</span>                  <span class="chord" data-chord="E">E</span>
+<span class="lyric">Ada satu arah yang tetap bertahan</span>
+
+<span class="chord" data-chord="Am">Am</span>                 <span class="chord" data-chord="G">G</span>
+<span class="lyric">Nada sederhana mengisi malam</span>
+<span class="chord" data-chord="F">F</span>                    <span class="chord" data-chord="E">E</span>
+<span class="lyric">Menuntun langkah pulang perlahan</span>
+
+<span class="section-title">Pre-Chorus</span>
+<span class="chord" data-chord="Dm">Dm</span>             <span class="chord" data-chord="Am">Am</span>
+<span class="lyric">Bila hari kembali berganti</span>
+<span class="chord" data-chord="F">F</span>                  <span class="chord" data-chord="E">E</span>
+<span class="lyric">Kita masih punya alasan di sini</span>
+
+<span class="section-title">Chorus</span>
+<span class="chord" data-chord="C">C</span>                <span class="chord" data-chord="G">G</span>
+<span class="lyric">Simpan cerita di antara nada</span>
+<span class="chord" data-chord="Dm">Dm</span>               <span class="chord" data-chord="Am">Am</span>
+<span class="lyric">Biarkan gitar yang menjaganya</span>
+<span class="chord" data-chord="F">F</span>                 <span class="chord" data-chord="C">C</span>
+<span class="lyric">Saat semua terasa berubah</span>
+<span class="chord" data-chord="Dm">Dm</span>                <span class="chord" data-chord="E">E</span>
+<span class="lyric">Satu melodi membawa kita pulang</span>
+
+<span class="section-title">Interlude</span>
+<span class="chord" data-chord="Am">Am</span>  <span class="chord" data-chord="G">G</span>  <span class="chord" data-chord="F">F</span>  <span class="chord" data-chord="E">E</span>
+
+<span class="section-title">Outro</span>
+<span class="chord" data-chord="F">F</span>  <span class="chord" data-chord="G">G</span>  <span class="chord" data-chord="Am">Am</span>
+      </div>
+    </article>
+    <aside id="populer"><h2>Chord populer lainnya</h2><div class="song-list">
+      <a href="#"><span class="number">01</span><span>Peterpan — Mungkin Nanti</span></a><a href="#"><span class="number">02</span><span>NOAH — Separuh Aku</span></a><a href="#"><span class="number">03</span><span>Naff — Akhirnya Ku Menemukanmu</span></a><a href="#"><span class="number">04</span><span>Ungu — Demi Waktu</span></a><a href="#"><span class="number">05</span><span>Dewa 19 — Kangen</span></a>
+    </div></aside>
+  </main>
+  <footer id="tentang"><div class="footer-inner"><span>© 2026 CordList</span><span>Chord mudah dibaca, nyaman dimainkan.</span></div></footer>
+  <script>
+    const chromatic=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']; let shift=0; let fontSize=1;
+    function transposeChord(chord,amount){return chord.replace(/[A-G](?:#|b)?/,(root)=>{const flats={Db:'C#',Eb:'D#',Gb:'F#',Ab:'G#',Bb:'A#'};const index=chromatic.indexOf(flats[root]||root);return chromatic[(index+amount+120)%12];});}
+    function renderChords(){document.querySelectorAll('[data-chord]').forEach((node)=>{node.textContent=transposeChord(node.dataset.chord,shift);});const currentKey=transposeChord('Am',shift);document.getElementById('key').textContent=currentKey;document.getElementById('meta-key').textContent=currentKey;}
+    document.getElementById('down').addEventListener('click',()=>{shift-=1;renderChords();});
+    document.getElementById('up').addEventListener('click',()=>{shift+=1;renderChords();});
+    document.getElementById('smaller').addEventListener('click',()=>{fontSize=Math.max(.82,fontSize-.08);document.documentElement.style.setProperty('--chord-size',`${fontSize}rem`);});
+    document.getElementById('larger').addEventListener('click',()=>{fontSize=Math.min(1.4,fontSize+.08);document.documentElement.style.setProperty('--chord-size',`${fontSize}rem`);});
+  </script>
+</body>
+</html>
